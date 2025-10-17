@@ -1,0 +1,26 @@
+public class olderobjects implements Database.Batchable<sobject> 
+{
+    public Database.Querylocator start(Database.Batchablecontext Bc)
+    {
+        Date cutoffDate = system.today().addYears(-5);
+        return Database.getquerylocator([SELECT Id
+            FROM Project__c
+            WHERE Status__c ='completed' AND CreatedDate < :cutoffDate]);
+    }
+    public void execute(Database.Batchablecontext Bc, List<Project__c> deleteoldrecords)
+    {
+        try
+        {
+            delete deleteoldrecords;  
+        } 
+        catch(Exception e) 
+        {
+            System.debug('Error deleting records: ' + e.getMessage());
+        } 
+    }
+    public void finish(Database.Batchablecontext Bc)
+    {
+        system.debug('old records deleted');
+    }
+
+}
